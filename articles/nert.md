@@ -1,0 +1,291 @@
+# nert
+
+The Australian Terrestrial Ecosystem Research Network (TERN) offers many
+datasets as Cloud Optimised GeoTIFF (COG) files via the [TERN Data
+Portal](https://portal.tern.org.au). The {nert} package provides an easy
+and straightforward way to retrieve these datasets for use in R data
+analytics workflows. Datasets currently available using {nert} are:
+
+- Daily volumetric soil moisture measurements, from the TERN Soil
+  Moisture Integration and Prediction System (SMIPS),
+- the Australian Soil Classification Map,
+- Actual Evapotranspiration measurements, estimated using the CSIRO
+  MODIS Reflectance-based Scaling EvapoTranspiration (CMRSET) algorithm,
+- canopy height data from the OzTreeMap best-pick Canopy Height
+  composite model,
+- Australian land surface phenology data,
+- digital soil attributes from the *Soil and Landscape Grid of
+  Australia* (SLGA), including available volumetric water capacity,
+  clay/sand/silt content, Bulk Density (whole earth) measurements, soil
+  pH (CaCl2 and water), nitrogen and phosphorus content, cation exchange
+  capacity, and the drained upper limit and 15-bar lower limit water
+  content readings,
+- soil bacteria and soil fungi beta diversity.
+
+The {nert} package uses your registered TERN API Key to authenticate
+with the TERN Data Portal. This vignette introduces you to the {nert}
+package, including how to obtain an API key and how to use {nert} to
+download TERN COG datasets.
+
+## Acquiring Your TERN API Key
+
+An API key is required to authenticate and access TERN datasets through
+the TERN Data Portal. It is straightforward to sign up to TERN and
+acquire an API key, and by setting the key in your R environment (via
+{keyring}) you can provide the {nert} package with that credential to
+allow convenient access whenever you use the package to download TERN
+datasets.
+
+The following steps detail the process for signing in to your TERN
+account, generating an API key, and setting it up for use with the
+{nert} package.
+
+1.  Navigate to the TERN Data Discovery Portal
+    (<https://portal.tern.org.au/>) in a web browser. Click the “Sign
+    In” button that appears in the top-right of the browser window.
+
+    ![The TERN Data Discovery home page, with the Sign in button at the
+    top right.](01-get-started.jpg)
+
+2.  Click the Australian Access Federation button to sign in to the TERN
+    Data Portal via your University ID (or alternatively, sign in via
+    CILogon or your Google identity).
+
+    ![The TERN sign-in page, with the Australian Access Federation,
+    CILogon and Google sign-in options.](02-get-started.jpg)
+
+3.  Once signed in, click on the menu in the top-right with your name
+    and click the “TERN Account” entry to open your account profile.
+
+    ![The user menu at the top right of the Data Discovery page, open at
+    the TERN Account entry.](03-get-started.jpg)
+
+4.  On your account profile screen, navigate to the menu on the
+    left-hand side, and click the “Create API key” entry.
+
+    ![The TERN account page, with Create API key selected in the
+    left-hand menu.](04-get-started.jpg)
+
+5.  On this screen you can create your API key for accessing the TERN
+    Data Portal. Give your key whatever name you like (e.g., below I
+    have called the key “my_API_key” for demonstration purposes), and
+    then click the “Request API Key” button.
+
+    ![The Create API Key form, with the key name my_API_key entered
+    above the Request API Key button.](05-get-started.jpg)
+
+6.  Your API key is now generated and appears as the string of text
+    inside the text box on the page, together with the key’s creation
+    and expiration dates. Copy the API key to your clipboard, be sure
+    not to close this browser window until after you have successfully
+    stored the key locally somewhere as you won’t see it again.
+
+    ![The API Key Information page, showing the new key (blurred) and
+    its creation and expiry dates.](06-get-started.jpg)
+
+## Saving Your API Key Locally (using {keyring})
+
+We suggest that you use a secure method for storing your API keys in R.
+You can use the [{keyring}](https://keyring.r-lib.org/index.html)
+package to store your TERN API Key in your system’s credential store.
+
+1.  If you don’t have the {keyring} package installed, you can install
+    it with:
+
+    ``` r
+
+    install.packages("keyring")
+    ```
+
+    Note that on Linux systems, you may need to install the `libsecret`
+    and `libssl` system libraries before you install the {keyring}
+    package, in order for {keyring} to have access to the Linux Secret
+    Service API to set up the keyring. On Debian or RHEL derivatives,
+    you can do this as follows:
+
+    - Debian/Ubuntu: `sudo apt install libsecret-1-dev libssl-dev`
+    - RHEL/Fedora: `sudo dnf install libsecret-devel openssl-devel`
+
+2.  Once {keyring} is installed, you can store your API key using the
+    [`keyring::keyring_create()`](https://keyring.r-lib.org/reference/has_keyring_support.html)
+    and
+    [`keyring::key_set()`](https://keyring.r-lib.org/reference/key_get.html)
+    functions as follows:
+
+    ``` r
+
+    library(keyring)
+
+    keyring_create("nert")
+    ```
+
+    This will create a new keyring called `nert`, with a new key called
+    `TERN_API_KEY`. You may be prompted by your system’s keyring manager
+    to create a password for the keyring here, which can be any password
+    you like. Then run
+    [`keyring::key_set()`](https://keyring.r-lib.org/reference/key_get.html):
+
+    ``` r
+
+    key_set("TERN_API_KEY", keyring = "nert")
+    ```
+
+    The function will then prompt you (via your system’s keyring
+    manager) for the actual key value. Here is where you paste the API
+    key from the TERN website that you copied to the clipboard earlier.
+    You can then verify that the key was stored as expected by using the
+    [`keyring::key_get()`](https://keyring.r-lib.org/reference/key_get.html)
+    function:
+
+    ``` r
+
+    key_get("TERN_API_KEY", keyring = "nert")
+    ```
+
+3.  Finally, you can quickly check that the TERN API key is working with
+    the {nert} package correctly by trying to download a raster. The
+    below R code retrieves the SMIPS “totalbucket” soil moisture data
+    raster for January 1st, 2024 using the
+    [`nert::read_smips()`](https://docs.ropensci.org/nert/reference/read_smips.md)
+    function, and then uses the {terra} package’s
+    [`terra::extract()`](https://rspatial.github.io/terra/reference/extract.html)
+    function to get a point value for the soil moisture measurement at
+    the Adelaide CBD (at approximately 138.6007 decimal degrees Easting
+    for the longitude, and -34.9285 decimal degrees Northing for the
+    latitude). Note that we explicitly specify to use the `TERN_API_KEY`
+    we stored in the `nert` keyring by setting the `api_key` argument:
+
+    ``` r
+
+    library(terra)
+    library(nert)
+
+    r <- read_smips(
+      date = "2024-01-01",
+      api_key = key_get("TERN_API_KEY", keyring = "nert")
+    )
+
+    extract(r, xy = TRUE, data.frame(lon = 138.6007, lat = -34.9285))
+    ```
+
+## Reading TERN Data
+
+You can use the
+[`nert::read_smips()`](https://docs.ropensci.org/nert/reference/read_smips.md)
+function to retrieve rasters for the SMIPS datasets available on the
+TERN Data Portal, using the `date` argument to specify the date for the
+raster to be retrieved, and the `collection` argument to specify which
+specific SMIPS dataset to download. For instance, the following R code
+retrieves the “SMindex” raster for June 30, 2025:
+
+``` r
+
+library(nert)
+#> Registered S3 method overwritten by 'data.table':
+#>   method           from   
+#>   print.data.table colorDF
+#> 
+#> Attaching package: 'nert'
+#> The following object is masked from 'package:graphics':
+#> 
+#>     plot
+#> The following objects are masked from 'package:base':
+#> 
+#>     levels, plot
+library(terra)
+#> terra 1.9.50
+#> 
+#> Attaching package: 'terra'
+#> The following object is masked from 'package:knitr':
+#> 
+#>     spin
+
+r <- read_smips(date = "2025-06-30", collection = "SMindex")
+#> Warning: nert has set the GDAL option `GDAL_HTTP_USERPWD` to your TERN API key for the rest of this R session.
+#> ℹ GDAL sends the key with every `/vsicurl` request in this session, including requests to servers other than TERN.
+#> ℹ Restart R to clear it.
+```
+
+Plot the data with [`plot()`](https://rdrr.io/r/base/plot.html). Note
+that {nert} re-exports {terra}’s
+[`plot()`](https://rdrr.io/r/base/plot.html), so if simply want the
+whole data set, you can just retrieve it and use
+[`plot()`](https://rdrr.io/r/base/plot.html) on the resulting data
+without loading {terra}.
+
+``` r
+
+plot(r)
+```
+
+![A plot of SMIPS SMindex data for all of Australia on
+2025-06-30.](test-plot-smips-1.png)
+
+A plot of SMIPS SMindex data for all of Australia on 2025-06-30.
+
+However, if you wish to fetch only data for a single point or points,
+you can use the
+[`terra::extract()`](https://rspatial.github.io/terra/reference/extract.html)
+function. Since the rasters are stored on the TERN Data Portal as
+Cloud-Optimised GeoTIFFs (COGs),
+[`terra::extract()`](https://rspatial.github.io/terra/reference/extract.html)
+is very time- and space-efficient, **streaming only the bytes needed for
+the spatial extent that you ask for**. The below R code downloads only
+the data at the coordinates specified, rather than fetching the entire
+dataset:
+
+``` r
+
+extract(r, xy = TRUE, data.frame(lon = 138.6007, lat = -34.9285))
+#> # Data frame like object (class data.frame) 4 x 1:
+#>  │ID   │smips_smi_perc_20250630│x    │y    
+#>  │<dbl>│<dbl>                  │<dbl>│<dbl>
+#> 1│    1│                   0.16│  139│  -35
+```
+
+Reading rasters for the other available datasets works mostly the same
+way. For example, the below R code retrieves the raster for the
+Australian Soil Classification Map using the
+[`nert::read_asc()`](https://docs.ropensci.org/nert/reference/read_asc.md)
+function. Since this is a static dataset, you do not need to specify a
+date. By default, the soil classifications are retrieved:
+
+``` r
+
+asc <- read_asc()
+
+plot(asc)
+#> Warning: [plot] unknown categories in raster values
+```
+
+![A plot of Australian Soils Classification data.](asc-1.png)
+
+A plot of Australian Soils Classification data.
+
+If you wanted to see the confusion index instead (which provides a
+measure of the uncertainty associated with each classification), you can
+specify that dataset using the `collection` argument:
+
+``` r
+
+asc_ci <- read_asc(collection = "CI")
+```
+
+The SLGA soil attribute rasters work similarly, but have an additional
+depth parameter that you can specify. For instance, the following R code
+fetches and views the raster for the soil clay content at a depth of
+30-60cm by specifying the `depth` argument:
+
+``` r
+
+cly <- read_slga("CLY", depth = "030_060")
+
+plot(cly)
+```
+
+![A plot of the soil clay content (%) at a 30-60cm soil
+depth.](slga-1.png)
+
+A plot of the soil clay content (%) at a 30-60cm soil depth.
+
+That’s it, you’re all set!

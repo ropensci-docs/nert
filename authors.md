@@ -1,0 +1,43 @@
+# Authors and Citation
+
+## Authors
+
+- **Adam H. Sparks**. Author. [](https://orcid.org/0000-0002-0061-8359)
+
+- **Wasin Pipattungsakul**. Author.
+  [](https://orcid.org/0009-0005-2666-6315)
+
+- **Russell Edson**. Author. [](https://orcid.org/0000-0002-4607-5396)
+
+- **Sam Rogers**. Author. [](https://orcid.org/0000-0002-8147-1239)
+
+- **Max Moldovan**. Maintainer, author.
+  [](https://orcid.org/0000-0001-9680-8474)
+
+- **Michael Sumner**. Reviewer.
+  [](https://orcid.org/0000-0002-2471-7511)
+
+- **Shandiya Balasubramaniam**. Reviewer.
+  [](https://orcid.org/0000-0001-9928-9964)
+
+- **Grains Research and Development Corporation**. Funder, copyright
+  holder.
+  [![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/02xwr1996)  
+  GRDC Project CUR2210-005OPX (AAGI-CU), UOA2301-005OPX (AAGI-AU)
+
+## Citation
+
+Source:
+[`inst/CITATION`](https://github.com/ropensci/nert/blob/HEAD/inst/CITATION)
+
+Sparks AH, Pipattungsakul W, Edson R, Rogers S, Moldovan M (2026). nert:
+Curated Access to TERN Environmental Raster Data. R package version
+2.1.1. https://docs.ropensci.org/nert
+
+    @Manual{,
+      title = {{nert}: Curated Access to TERN Environmental Raster Data},
+      author = {Adam H. Sparks and Wasin Pipattungsakul and Russell Edson and Sam Rogers and Max Moldovan},
+      year = {2026},
+      note = {R package version 2.1.1},
+      url = {https://docs.ropensci.org/nert/},
+    }

@@ -1,0 +1,12 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  bandwidth_safe_subsetting: bandwidth_safe_subsetting.html
+  collect_tern_data: collect_tern_data.html
+  nert_for_agricultural_analytics: nert_for_agricultural_analytics.html
+  nert: nert.html
+last_built: 2026-11-03T10:05Z
+urls:
+  reference: https://docs.ropensci.org/nert/reference
+  article: https://docs.ropensci.org/nert/articles

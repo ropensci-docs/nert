@@ -1,0 +1,30 @@
+# Initialise nert package options (internal)
+
+Extracted from `.onLoad()` to allow direct unit testing. Sets
+package-level defaults for the retry behaviour shared by every
+`read_*()` and
+[`collect_tern_data()`](https://docs.ropensci.org/nert/reference/collect_tern_data.md)
+call:
+
+- `nert.max_tries` — integer, default `3L`
+
+- `nert.initial_delay` — integer (seconds), default `1L`
+
+## Usage
+
+``` r
+.init_nert_options()
+```
+
+## Value
+
+`NULL` when all options are already set; otherwise the value returned by
+[`base::options()`](https://rdrr.io/r/base/options.html) when defaults
+are populated.
+
+## Details
+
+Existing user-set values (e.g. set in `.Rprofile` or via
+[`base::options()`](https://rdrr.io/r/base/options.html) before
+[`library(nert)`](https://docs.ropensci.org/nert/)) are preserved; only
+unset options are populated with defaults.

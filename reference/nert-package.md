@@ -1,0 +1,61 @@
+# nert: Curated Access to TERN Environmental Raster Data
+
+Provides curated access to raster environmental data published by
+Australia's Terrestrial Ecosystem Research Network (TERN;
+<https://www.tern.org.au/>), spanning national soil attribute, soil
+classification, soil biodiversity, soil moisture, actual
+evapotranspiration, vegetation canopy height and phenology products. The
+package reads Cloud-Optimised 'GeoTIFF' (COG) and virtual raster files
+directly from the TERN data server via Geospatial Data Abstraction
+Library ('GDAL') 'vsicurl' virtual file system range requests, streaming
+only the requested spatial and temporal subset for efficient data
+transfer. The environmental raster data are returned as 'terra'
+'SpatRaster' objects. A convenient helper function is also provided that
+provides a batch-download capability given specific locations and dates,
+returning the extracted data values in an analysis-ready 'data.table'.
+Access to the TERN datasets using this package requires a free TERN API
+key.
+
+## See also
+
+Useful links:
+
+- <https://docs.ropensci.org/nert/>
+
+- <https://github.com/ropensci/nert>
+
+- Report bugs at <https://github.com/ropensci/nert/issues>
+
+## Author
+
+**Maintainer**: Max Moldovan <max.moldovan@adelaide.edu.au>
+([ORCID](https://orcid.org/0000-0001-9680-8474))
+
+Authors:
+
+- Max Moldovan <max.moldovan@adelaide.edu.au>
+  ([ORCID](https://orcid.org/0000-0001-9680-8474))
+
+- Adam H. Sparks <adamhsparks@gmail.com>
+  ([ORCID](https://orcid.org/0000-0002-0061-8359))
+
+- Wasin Pipattungsakul <wasin.pipattungsakul@adelaide.edu.au>
+  ([ORCID](https://orcid.org/0009-0005-2666-6315))
+
+- Russell Edson <russell.edson@adelaide.edu.au>
+  ([ORCID](https://orcid.org/0000-0002-4607-5396))
+
+- Sam Rogers <sam.rogers@adelaide.edu.au>
+  ([ORCID](https://orcid.org/0000-0002-8147-1239))
+
+Other contributors:
+
+- Michael Sumner ([ORCID](https://orcid.org/0000-0002-2471-7511))
+  \[reviewer\]
+
+- Shandiya Balasubramaniam
+  ([ORCID](https://orcid.org/0000-0001-9928-9964)) \[reviewer\]
+
+- Grains Research and Development Corporation
+  ([ROR](https://ror.org/02xwr1996)) (GRDC Project CUR2210-005OPX
+  (AAGI-CU), UOA2301-005OPX (AAGI-AU)) \[funder, copyright holder\]
